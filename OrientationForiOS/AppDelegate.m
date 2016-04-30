@@ -7,6 +7,8 @@
 //
 
 #import "AppDelegate.h"
+#import "PushedViewController.h"
+#import "PresentedViewcontroller.h"
 
 @interface AppDelegate ()
 
@@ -42,4 +44,39 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
+- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+    NSLog(@"%s",__FUNCTION__);
+    UIViewController *rootController = self.window.rootViewController;
+    if ([rootController.presentedViewController isKindOfClass:[PresentedViewcontroller class]]) {
+        PresentedViewcontroller *_vc = (PresentedViewcontroller*)rootController.presentedViewController;
+        if(_vc){
+            return UIInterfaceOrientationMaskAll;
+        } else {
+            return [self getSupportedOrientations];
+        }
+    } else {
+        return [self getSupportedOrientations];
+    }
+}
+
+#pragma mark - 
+
+- (UIInterfaceOrientationMask)getSupportedOrientations {
+    NSDictionary *dict = [[NSBundle mainBundle] infoDictionary];
+    NSArray *orientationArr = dict[@"UISupportedInterfaceOrientations"];
+    UIInterfaceOrientationMask targetOrientationMask = 0;
+    if ([orientationArr containsObject:@"UIInterfaceOrientationPortrait"]) {
+        targetOrientationMask = targetOrientationMask | UIInterfaceOrientationMaskPortrait;
+    }
+    if ([orientationArr containsObject:@"UIInterfaceOrientationPortraitUpsideDown"]) {
+        targetOrientationMask = targetOrientationMask | UIInterfaceOrientationMaskPortraitUpsideDown;
+    }
+    if ([orientationArr containsObject:@"UIInterfaceOrientationLandscapeRight"]) {
+        targetOrientationMask = targetOrientationMask | UIInterfaceOrientationMaskLandscapeRight;
+    }
+    if ([orientationArr containsObject:@"UIInterfaceOrientationLandscapeLeft"]) {
+        targetOrientationMask = targetOrientationMask | UIInterfaceOrientationMaskLandscapeLeft;
+    }
+    return targetOrientationMask;
+}
 @end
